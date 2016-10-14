@@ -1,0 +1,105 @@
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Document</title>
+	<script type="text/javascript" src="http:cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+</head>
+
+<body>
+	<input type="text" id="testtext" value="4 + 3 * ( 2 + 1 ) - 6 / 2">
+	<input type="button" id="testbutton" value="calculate" onclick="jisuan()"><br />
+    originalText: <label id='originalText'></label><br />
+    niBolanText: <label id='niBolanText'></label><br />
+    result : <label id='resultText'></label>
+</body>
+<script>
+    $(function(){
+        
+    })
+
+    function jisuan(){
+        var mytest = $('#testtext').val()
+        $('#originalText').text(mytest)
+        var nibolanResult = nibolan(mytest);
+        $('#niBolanText').text(nibolanResult)
+        var result = calculate(nibolanResult)
+        $('#resultText').text(result)
+    }
+
+    function nibolan(original){
+        console.log('original');
+        console.log(original);
+        if(!original) return;
+        var originalArray = original.split(' ');
+        var bolanChange = []
+        var result = '';
+        for(var i=0;i<originalArray.length;i++){
+            var currentChar = originalArray[i]
+            var currentStackTopChar = bolanChange.length>0 ? bolanChange[bolanChange.length-1] : '';
+            if(!isNaN(currentChar)){
+                result +=result.length>0?' ' + currentChar : currentChar
+            }
+            else if(currentChar == ')'){
+                for(var m=0;m<bolanChange.length;m++){
+                    var bolanChangePop = bolanChange.pop();
+                    if(bolanChangePop!='('){
+                        result +=result.length>0?' ' + bolanChangePop : bolanChangePop
+                    }
+                }
+            }else if((currentChar=='+' || currentChar=='-')&&(currentStackTopChar=='*' || currentStackTopChar=='/')){
+                while(bolanChange.length>0){
+                    var bolanChangePop = bolanChange.pop()
+                    if(bolanChangePop=='+' || bolanChangePop=='-' || bolanChangePop=='*' || bolanChangePop=='/'){
+                        result +=result.length>0?' ' + bolanChangePop : bolanChangePop
+                    }  
+                }
+                bolanChange.push(currentChar);
+            }else{
+                bolanChange.push(currentChar);
+            }
+        }
+        for(var i=bolanChange.length-1;i>=0;i--){
+            result +=result.length>0?' ' + bolanChange[i] : bolanChange[i]
+        }
+        return result;
+    }
+
+    function calculate(originalBolan){
+        console.log('result');
+        var nibolanArray = originalBolan.split(' ')
+        var tempArray = []
+        if(!nibolanArray) return;
+        for(var i=0;i<nibolanArray.length;i++){
+            currentItem = nibolanArray[i];
+            if(!isNaN(currentItem)){
+                tempArray.push(currentItem)
+            }
+            else{
+                var a = parseInt(tempArray.pop())
+                var b = parseInt(tempArray.pop())
+                switch(currentItem)
+                {
+                case '+':
+                tempArray.push(b+a)
+                break;
+                case '-':
+                tempArray.push(b-a)
+                break;
+                case '*':
+                tempArray.push(b*a)
+                break;
+                case '/':
+                tempArray.push(b/a)
+                break;                
+                }
+            }
+        }
+        return tempArray[0]
+    }
+
+</script>
+
+</html>
